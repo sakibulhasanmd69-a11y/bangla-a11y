@@ -8,7 +8,7 @@ when they actually ship.
 - [ ] Bengali font-readability guidance (font size/line height for Bengali script)
 - [ ] Checks for Bengali alt text / labels matching page language
 - [ ] More RTL cases: mixed-direction paragraphs, `bdi`/`bdo` misuse
-- [ ] CLI: `--axe-tags` passthrough and `--timeout` flag wiring to the engine
+- [x] CLI: `--axe-tags` passthrough and `--timeout` flag wiring to the engine (shipped; see CHANGELOG Unreleased)
 
 ## v0.3 — Workflow integration
 
