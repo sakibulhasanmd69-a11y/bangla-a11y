@@ -1,0 +1,63 @@
+{
+  "author": "BanglaA11y contributors",
+  "bin": {
+    "bangla-a11y": "./dist/src/bin.js"
+  },
+  "bugs": {
+    "url": "https://github.com/sakibulhasanmd69-a11y/bangla-a11y/issues"
+  },
+  "dependencies": {
+    "@axe-core/playwright": "^4.10.2",
+    "axe-core": "^4.10.3",
+    "playwright": "^1.49.1"
+  },
+  "description": "BanglaA11y \u2014 accessibility auditing toolkit for Bengali and English websites",
+  "devDependencies": {
+    "@eslint/js": "^9.16.0",
+    "@types/node": "^22.10.0",
+    "eslint": "^9.16.0",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.18.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "homepage": "https://github.com/sakibulhasanmd69-a11y/bangla-a11y",
+  "keywords": [
+    "accessibility",
+    "a11y",
+    "axe-core",
+    "playwright",
+    "bengali",
+    "bangla",
+    "wcag",
+    "audit"
+  ],
+  "license": "MIT",
+  "main": "./dist/src/index.js",
+  "name": "bangla-a11y",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sakibulhasanmd69-a11y/bangla-a11y.git"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "clean": "rm -rf dist",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" \"*.json\" \"*.md\"",
+    "format:check": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\" \"*.json\" \"*.md\"",
+    "lint": "eslint src test",
+    "lint:fix": "eslint src test --fix",
+    "start": "node dist/cli.js",
+    "test": "npm run build && node --test dist/test/*.test.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "types": "./dist/src/index.d.ts",
+  "version": "0.1.0"
+}
