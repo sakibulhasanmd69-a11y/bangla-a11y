@@ -54,7 +54,7 @@
     "format:check": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\" \"*.json\" \"*.md\"",
     "lint": "eslint src test",
     "lint:fix": "eslint src test --fix",
-    "start": "node dist/cli.js",
+    "start": "node dist/src/bin.js",
     "test": "npm run build && node --test dist/test/*.test.js",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
