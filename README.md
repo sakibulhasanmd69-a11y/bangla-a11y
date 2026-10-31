@@ -64,6 +64,9 @@ bangla-a11y audit ./fixtures/bengali.html --format markdown --out ./out
 
 # Exit 1 if any critical or serious finding is reported (useful in CI)
 bangla-a11y audit https://example.com --strict
+
+# Override the page timeout and the axe-core tag set
+bangla-a11y audit https://example.com --timeout 15000 --axe-tags wcag2a,wcag2aa
 ```
 
 The CLI prints a summary and the paths it wrote:
