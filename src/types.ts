@@ -30,7 +30,7 @@ export interface AuditResult {
 }
 
 export interface AuditOptions {
-  /** Extra axe-core rule tags to run, in addition to the WCAG 2.x A/AA defaults. */
+  /** Axe-core rule tags to run, replacing the WCAG 2.x A/AA defaults when set. */
   axeTags?: string[];
   /** Browser launch headless flag. Defaults to true. */
   headless?: boolean;
