@@ -2,21 +2,24 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { auditTarget } from './engine.js';
 import { generateHtml, generateJson, generateMarkdown } from './reports.js';
+import type { AuditOptions } from './types.js';
 
 export const CLI_VERSION = '0.1.0';
 
 export interface CliOptions {
+  axeTags?: string[];
   format: 'all' | 'html' | 'json' | 'markdown';
   outDir: string;
   strict: boolean;
   target: string;
+  timeoutMs?: number;
 }
 
 export function printHelp(): void {
   console.log(`BanglaA11y ${CLI_VERSION} — accessibility auditing for Bengali and English websites.
 
 Usage:
-  bangla-a11y audit <url-or-html-file> [--format html|json|markdown|all] [--out <dir>] [--strict]
+  bangla-a11y audit <url-or-html-file> [--format html|json|markdown|all] [--out <dir>] [--strict] [--timeout <ms>] [--axe-tags <tag,tag>]
   bangla-a11y --help
   bangla-a11y --version
 
@@ -24,6 +27,9 @@ Options:
   --format   Report format. Default: all (writes report.html, report.json, report.md).
   --out      Output directory. Default: ./bangla-a11y-report
   --strict   Exit 1 if any critical or serious finding is reported.
+  --timeout  Page navigation timeout in milliseconds. Default: 30000.
+  --axe-tags Comma-separated axe-core rule tags to run, replacing the default
+             wcag2a, wcag2aa, wcag21a, wcag21aa set (e.g. --axe-tags wcag2a,wcag2aa).
 
 Notes:
   Automated checks do not guarantee full WCAG compliance. Manual testing
@@ -43,13 +49,15 @@ export function parseArgs(argv: string[]): CliOptions {
   }
   if (args[0] !== 'audit' || !args[1]) {
     console.error(
-      'Usage: bangla-a11y audit <url-or-html-file> [--format html|json|markdown|all] [--out <dir>] [--strict]',
+      'Usage: bangla-a11y audit <url-or-html-file> [--format html|json|markdown|all] [--out <dir>] [--strict] [--timeout <ms>] [--axe-tags <tag,tag>]',
     );
     process.exit(2);
   }
   let format: CliOptions['format'] = 'all';
   let outDir = './bangla-a11y-report';
   let strict = false;
+  let timeoutMs: number | undefined;
+  let axeTags: string[] | undefined;
   for (let i = 2; i < args.length; i += 1) {
     const arg = args[i];
     if (arg === '--format') {
@@ -71,16 +79,45 @@ export function parseArgs(argv: string[]): CliOptions {
       i += 1;
     } else if (arg === '--strict') {
       strict = true;
+    } else if (arg === '--timeout') {
+      const value = args[i + 1];
+      const parsed = value === undefined ? Number.NaN : Number(value);
+      if (!Number.isInteger(parsed) || parsed <= 0) {
+        console.error(
+          `Invalid --timeout value: ${value ?? '(missing)'} (expected a positive integer in ms)`,
+        );
+        process.exit(2);
+      }
+      timeoutMs = parsed;
+      i += 1;
+    } else if (arg === '--axe-tags') {
+      const value = args[i + 1];
+      const tags = (value ?? '')
+        .split(',')
+        .map((tag) => tag.trim())
+        .filter((tag) => tag !== '');
+      if (tags.length === 0) {
+        console.error('Missing value for --axe-tags (expected a comma-separated tag list)');
+        process.exit(2);
+      }
+      axeTags = tags;
+      i += 1;
     } else {
       console.error(`Unknown argument: ${arg}`);
       process.exit(2);
     }
   }
-  return { format, outDir, strict, target: args[1] as string };
+  const options: CliOptions = { format, outDir, strict, target: args[1] as string };
+  if (axeTags !== undefined) options.axeTags = axeTags;
+  if (timeoutMs !== undefined) options.timeoutMs = timeoutMs;
+  return options;
 }
 
 export async function runCli(options: CliOptions): Promise<number> {
-  const result = await auditTarget(options.target);
+  const auditOptions: AuditOptions = {};
+  if (options.axeTags !== undefined) auditOptions.axeTags = options.axeTags;
+  if (options.timeoutMs !== undefined) auditOptions.timeoutMs = options.timeoutMs;
+  const result = await auditTarget(options.target, auditOptions);
   const outDir = resolve(options.outDir);
   await mkdir(outDir, { recursive: true });
   const written: string[] = [];
