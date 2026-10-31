@@ -3,6 +3,19 @@
 All notable changes to BanglaA11y are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+### Added
+
+- CLI `--timeout <ms>` and `--axe-tags <tag,tag>` flags, wired through to
+  the Playwright/axe-core engine (previously the engine accepted these
+  options but the CLI did not expose them).
+
+### Fixed
+
+- `npm start` now runs the real CLI entry point (`dist/src/bin.js`);
+  it previously pointed at a non-existent `dist/cli.js`.
+
 ## [0.1.0] - 2026-11-01
 
 ### Added
